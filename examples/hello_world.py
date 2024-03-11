@@ -17,9 +17,10 @@ config = PPOConfig(**ppo_config)
 ppo_trainer = PPOTrainer(config, model, model_ref, tokenizer)
 
 # 3. encode a query
+print('encoding query')
 query_txt = "This morning I went to the "
 query_tensor = tokenizer.encode(query_txt, return_tensors="pt").to(model.pretrained_model.device)
-
+print('generating response')
 # 4. generate model response
 generation_kwargs = {
     "min_length": -1,
@@ -35,6 +36,6 @@ response_txt = tokenizer.decode(response_tensor[0])
 # 5. define a reward for response
 # (this could be any reward such as human feedback or output from another model)
 reward = [torch.tensor(1.0, device=model.pretrained_model.device)]
-
+print('ppo step')
 # 6. train model with ppo
 train_stats = ppo_trainer.step([query_tensor[0]], [response_tensor[0]], reward)
